@@ -1,0 +1,35 @@
+#ifndef OUTPUT_DEFINITIONS
+#define OUTPUT_DEFINITIONS
+
+#define DEFUALT_PRECISION 2
+#define OK_REQUEST_RESPONSE "OK"
+#define HOTEL_STAR "star: "
+#define HOTEL_OVERVIEW "overview: "
+#define HOTEL_AMENITIES "amenities: "
+#define HOTEL_CITY "city: "
+#define HOTEL_LATITUDE "latitude: "
+#define HOTEL_LONGITUDE "longitude: "
+#define HOTEL_ROOOM_NUMBERS "#rooms: "
+#define HOTEL_ROOM_PRICES "price: "
+#define EMPTY_STRING ""
+#define ROOM_INFO_DELIMITER " "
+#define ROOM_NUMBER_SYNTAX "#"
+#define ROOM_ID_DELIMITER " "
+#define RESERVATION_ID "id: "
+#define RESERVATION_INFO_DELIMITER " "
+#define RESERVATION_HOTEL_ID "hotel: "
+#define RESERVATION_ROOM_TYPE "room: "
+#define RESERVATION_QUANTITY "quantity: "
+#define RESERVATION_COST "cost: "
+#define RESERVATION_CHECK_IN "check_in "
+#define RESERVATION_CHECK_OUT "check_out "
+#define LOCATION "location: "
+#define CLEANLINESS "cleanliness: "
+#define STAFF "staff: "
+#define FACILITIES "facilities: "
+#define VALUE_FOR_MONEY "value for money: "
+#define OVERALL "overall rating: "
+#define COLON ": "
+#define HOTEL_INFO_DELIMITER " "
+
+#endif
