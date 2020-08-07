@@ -26,6 +26,13 @@ User* UserDatabase::login(string email, size_t password_hash)
     throw BadRequest();
 }
 
+User* UserDatabase::get_user_by_username(std::string username)
+{
+    for (auto it = users.begin(); it != users.end(); it++)
+        if ((*it)->get_username() == username)
+            return *it;
+}
+
 User* UserDatabase::signup(string username, string email, string password)
 {
     check_duplicate_info(username, email);

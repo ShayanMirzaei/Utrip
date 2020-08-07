@@ -9,14 +9,16 @@ class Hotel;
 
 class HotelDataParser {
     public:
-    HotelDataParser(HotelDatabase* _database, std::string _file_dir): database(_database), csv_file_dir(_file_dir) {};
+    HotelDataParser(HotelDatabase* _database, std::string hotel_file_dir, std::string rating_file_dir): database(_database), hotel_csv_file_dir(hotel_file_dir), rating_csv_file_dir(rating_file_dir) {};
     void read_data();
     std::string dump_first_line(std::ifstream& file);
 
     private:
     HotelDatabase* database;
-    std::string csv_file_dir;
-    
+    std::string hotel_csv_file_dir;
+    std::string rating_csv_file_dir;
+    void read_hotel_data();
+    void read_ratings();
 };
 
 #endif

@@ -7,9 +7,12 @@
 #include <iostream>
 #include <algorithm>
 
+#define NO_USER NULL
+
 using namespace std;
 
 enum HotelData {id, name, rating, overview, amenities, city, latitude, longitude, image_url};
+enum RatingsData {data_hotel_id, data_location, data_cleanliness, data_staff, data_facilities, data_value_for_money, data_overall};
 typedef vector<Room*> _rooms;
 
 HotelDatabase::~HotelDatabase()
@@ -19,6 +22,13 @@ HotelDatabase::~HotelDatabase()
         delete *it;
         *it = nullptr;
     }
+}
+
+void HotelDatabase::add_ratings(vector<string> data)
+{
+    Rating* average_rating = new Rating(stod(data[data_location]), stod(data[data_cleanliness]), stod(data[data_staff]), stod(data[data_facilities]), stod(data[data_value_for_money]), stod(data[data_overall]));
+    Hotel* hotel = get_hotel_by_id(data[data_hotel_id]);
+    hotel->set_average_rating(average_rating);
 }
 
 void HotelDatabase::add_hotel(vector<string> data)

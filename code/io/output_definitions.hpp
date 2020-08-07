@@ -31,5 +31,15 @@
 #define OVERALL "overall rating: "
 #define COLON ": "
 #define HOTEL_INFO_DELIMITER " "
+#define DEFAULT_FILTER_ACTIVATION "* Results have been filtered by the default price filter."
+#define ACTIVE "active "
+#define WEIGHT_LOCATION "location "
+#define WEIGHT_CLEANLINESS "cleanliness "
+#define WEIGHT_STAFF "staff "
+#define WEIGHT_FACILITIES "facilities "
+#define WEIGHT_VALUE_FOR_MONEY "value_for_money "
+#define WEIGHT_OVERALL "overall_rating "
+#define WEIGHT_DELIMITER " "
+#define DEACTIVE "false"
 
 #endif

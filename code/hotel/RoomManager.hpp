@@ -19,11 +19,12 @@ class RoomManager {
     RoomInfo get_room_numbers() { return room_numbers; }
     RoomInfo get_room_prices() { return room_prices; }
     double get_average_room_price();
-    double get_reservation_price(std::string room_type, int quantity);
+    double get_reservation_one_night_price(std::string room_type, int quantity);
     Reservation* reserve_rooms(std::string room_type, int quantity, int check_in, int check_out);
     void cancel_reservation(Reservation* reservation);
     bool has_available_rooms(std::string room_type, int quantity, int check_in, int check_out);
     int get_total_number_of_rooms() { return rooms.size(); }
+    bool room_price_is_lower(RoomManager* room_manager, RoomType type);
     
     private:
     _rooms rooms;

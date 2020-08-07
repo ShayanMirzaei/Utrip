@@ -12,6 +12,7 @@ class Wallet {
     _transactions get_transactions() { return transactions; }
     bool has_credit(double amount);
     void decrease_credit(double amount);
+    double get_credit() { return credit; }
 
     private:
     double credit;

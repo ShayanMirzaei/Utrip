@@ -15,6 +15,7 @@ class HotelDatabase {
     Hotel* get_hotel_by_id(std::string id);
     _hotels get_hotels() { return hotels; }
     void sort_by_unique_id();
+    void add_ratings(std::vector<std::string> data);
     
     private:
     _hotels hotels;

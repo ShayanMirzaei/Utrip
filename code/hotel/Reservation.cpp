@@ -19,6 +19,11 @@ void Reservation::set_hotel_id(string _hotel_id)
     hotel_id = _hotel_id;
 }
 
+double Reservation::get_one_night_price()
+{
+    return total_price / (check_out - check_in + 1);
+}
+
 bool Reservation::is_full(int new_check_in, int new_check_out)
 {
     if ((new_check_in <= check_out && new_check_in >= check_in) || (new_check_out >= check_in && new_check_out <= check_out))

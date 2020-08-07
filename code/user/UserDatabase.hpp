@@ -12,6 +12,7 @@ class UserDatabase {
     ~UserDatabase();
     User* signup(std::string username, std::string email, std::string password);
     User* login(std::string email, size_t password_hash);
+    User* get_user_by_username(std::string username);
 
     private:
     _users users;  

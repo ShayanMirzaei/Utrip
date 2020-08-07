@@ -5,6 +5,7 @@
 #include <vector>
 #include "../user/User.hpp"
 #include "Rating.hpp"
+#include "../user/Weight.hpp"
 #include "../Exception.hpp"
 
 #define INIT_VALUE 0.0
@@ -39,7 +40,6 @@ Hotel::Hotel(string _unique_id, HotelProperties _properties, HotelLocation _loca
     location = _location;
     image_url = _image_url;
     room_manager = _room_manager;
-    total_ratings = Rating(NULL ,INIT_VALUE, INIT_VALUE, INIT_VALUE, INIT_VALUE, INIT_VALUE, INIT_VALUE);
 }
 
 Hotel::~Hotel()
@@ -47,28 +47,25 @@ Hotel::~Hotel()
     delete room_manager;
     for (auto it = ratings.begin(); it != ratings.end(); it++)
     {
-        delete *it;
-        *it = nullptr;
+        delete (*it).second;
+        (*it).second = nullptr;
     }
 }
 
-Rating Hotel::get_average_ratings()
+double Hotel::calculate_weighted_rating(Weight* weight)
 {
-    if (ratings.size() == 0)
-        throw NoRating();
-    return total_ratings / ratings.size();
+    double weighted_rating = weight->calculate_weighted_average(average_ratings);
+    return weighted_rating;
 }
 
-void Hotel::add_rating(Rating* rating)
+bool Hotel::room_price_is_lower(Hotel* hotel, RoomType type)
+{
+    return room_manager->room_price_is_lower(hotel->room_manager, type);
+}
+
+void Hotel::add_rating(User* user, Rating* rating)
 {   
-    for (auto it = ratings.begin(); it != ratings.end(); it++)
-        if ((*it)->user == rating->user)
-        {
-            ratings.erase(it);
-            break;
-        }
-    ratings.push_back(rating);
-    total_ratings = total_ratings + *rating;
+    ratings[user] = rating;
 }
 
 void Hotel::add_comment(Comment comment)

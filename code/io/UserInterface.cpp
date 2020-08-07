@@ -1,11 +1,13 @@
 #include "UserInterface.hpp"
 #include "../Utrip.hpp"
-#include "../utilities.hpp"
+#include "../utility_functions.hpp"
 #include "../Exception.hpp"
 #include <string>
 #include <iostream>
 #include <map>
 #include "interface_definitions.hpp"
+#include "../server/server.hpp"
+#include "../server/route.hpp"
 
 using namespace std;
 
@@ -59,6 +61,12 @@ void UserInterface::parse_post()
         handle_post_ratings();
     else if (command[COMMAND_INDEX] == FILTER_COMMAND)
         handle_post_filters();
+    else if (command[COMMAND_INDEX] == DEFAULT_PRICE_FILTER_COMMAND)
+        handle_default_price_filter();
+    else if (command[COMMAND_INDEX] == SORT_COMMAND)
+        handle_sort();
+    else if (command[COMMAND_INDEX] == MANUAL_WEIGHTS_COMMAND)
+        handle_post_manual_weights();
     else
         throw NotFound();
 }
@@ -75,6 +83,10 @@ void UserInterface::parse_get()
         handle_get_comments();
     else if (command[COMMAND_INDEX] == RATING_COMMAND)
         handle_get_ratings();
+    else if (command[COMMAND_INDEX] == MANUAL_WEIGHTS_COMMAND)
+        handle_get_manual_weights();
+    else if (command[COMMAND_INDEX] == ESTIMATED_WEIGHTS_COMMAND)
+        handle_get_estimated_weights();
     else 
         throw NotFound();
 }
@@ -87,6 +99,60 @@ void UserInterface::parse_delete()
         handle_delete_filters();
     else
         throw NotFound();
+}
+
+void UserInterface::handle_get_estimated_weights()
+{
+    check_permission();
+    utrip->show_estimated_weights(logged_in_user);
+}
+
+void UserInterface::handle_get_manual_weights()
+{
+    check_permission();
+    utrip->show_manual_weights(logged_in_user);
+}
+
+void UserInterface::handle_post_manual_weights()
+{
+    check_permission();
+    if (get_arguement(ACTIVE) == FALSE)
+        utrip->deactivate_manual_weights(logged_in_user);
+    else if (get_arguement(ACTIVE) != TRUE)
+        throw BadRequest();
+    double location_w = stod(get_arguement(LOCATION));
+    double cleanliness_w = stod(get_arguement(CLEANLINESS));
+    double staff_w = stod(get_arguement(STAFF));
+    double facilities_w = stod(get_arguement(FACILITIES));
+    double value_for_money_w = stod(get_arguement(VALUE_FOR_MONEY));
+    utrip->activate_manual_weights(logged_in_user, location_w, cleanliness_w, staff_w, facilities_w, value_for_money_w);
+}
+
+void UserInterface::handle_sort()
+{
+    check_permission();
+    string property = get_arguement(PROPERTY);
+    string order_string = get_arguement(ORDER);
+    bool order;
+    if (order_string == ASCENDING)
+        order = false;
+    else if (order_string == DESCENDING)
+        order = true;
+    else 
+        throw BadRequest();
+    utrip->add_sort_to_user(logged_in_user, property, order);
+}
+
+void UserInterface::handle_default_price_filter()
+{
+    check_permission();
+    string activation = get_arguement(ACTIVE);
+    if (activation == TRUE)
+        utrip->activate_default_price_filter(logged_in_user);
+    else if (activation == FALSE)
+        utrip->deactivate_default_price_filter(logged_in_user);
+    else
+        throw BadRequest();
 }
 
 void UserInterface::handle_delete_filters()

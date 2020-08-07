@@ -36,3 +36,8 @@ const char* NoRating::what() const noexcept
 {
     return "No Rating";
 }
+
+const char* InsufficientRatings::what() const noexcept
+{
+    return "Insufficient Ratings";
+}

@@ -18,8 +18,13 @@
 #include "filter/FilterPrice.hpp"
 #include "filter/FilterRoom.hpp"
 #include "filter/FilterStar.hpp"
+#include "filter/FilterDefaultPrice.hpp"
+#include "user/Sort.hpp"
+#include "user/Weight.hpp"
 
 #define MAX_STAR 5
+#define MINIMUM_WEIGHT 1
+#define MAXIMUM_WEIGHT 5
 
 using namespace std;
 
@@ -39,9 +44,72 @@ Utrip::~Utrip()
     delete user_database;
 }
 
-void Utrip::read_hotel_info_from_csv(string hotel_file_dir)
+User* Utrip::get_user_by_username(string username)
 {
-    HotelDataParser parser(hotel_database, hotel_file_dir);
+    return user_database->get_user_by_username(username);
+}
+
+Hotel* Utrip::get_hotel_by_id(string id)
+{
+    return hotel_database->get_hotel_by_id(id);
+}
+
+void Utrip::deactivate_manual_weights(User* user)
+{
+    user->deactivate_manual_weights();
+    output->ok_request();
+}
+
+void Utrip::activate_manual_weights(User* user, double location_w, double cleanliness_w, double staff_w, double facilities_w, double value_for_money_w)
+{
+    vector<double> weights = {location_w, cleanliness_w, staff_w, facilities_w, value_for_money_w};
+    check_weights(weights);
+    Weight* weight = new Weight(location_w, cleanliness_w, staff_w, facilities_w, value_for_money_w);
+    user->set_manual_weights(weight);
+    output->ok_request();
+}
+
+void Utrip::show_estimated_weights(User* user)
+{
+    Weight* weight = user->get_estimated_weights();
+    output->show_estimated_weights(weight);
+}
+
+void Utrip::show_manual_weights(User* user)
+{
+    Weight* weight = user->get_manual_weights();
+    output->show_manual_weights(weight, user->get_manual_weight_mode());
+}
+
+
+void Utrip::handle_user_sort(User* user, _hotels& hotels)
+{
+    user->handle_personal_rating();
+    user->get_sort()->sort_hotels(hotels);
+}
+
+void Utrip::add_sort_to_user(User* user, string property, bool order)
+{               
+    Sort* sort = new Sort(property, order);
+    user->set_sort(sort);
+    output->ok_request();
+}
+
+void Utrip::deactivate_default_price_filter(User* user)
+{
+    user->deactivate_default_price_filter();
+    output->ok_request();
+}
+
+void Utrip::activate_default_price_filter(User* user)
+{
+    user->activate_default_price_filter();
+    output->ok_request();
+}
+
+void Utrip::read_hotel_info_from_csv(string hotel_file_dir, string rating_file_dir)
+{
+    HotelDataParser parser(hotel_database, hotel_file_dir, rating_file_dir);
     parser.read_data();
 }
 
@@ -84,7 +152,7 @@ void Utrip::add_city_filter(User* user, string city)
 void Utrip::show_average_ratings(string hotel_id)
 {
     Hotel* hotel = hotel_database->get_hotel_by_id(hotel_id);
-    Rating average_ratings = hotel->get_average_ratings();
+    Rating* average_ratings = hotel->get_average_ratings();
     output->show_average_ratings(average_ratings);
 }
 
@@ -98,8 +166,9 @@ void Utrip::show_comments(string hotel_id)
 void Utrip::add_rating(User* user, string hotel_id, double location, double cleanliness, double staff, double facilities, double value_for_money, double overall_rating)
 {
     Hotel* hotel = hotel_database->get_hotel_by_id(hotel_id);
-    Rating* rating =  new Rating(user, location, cleanliness, staff, facilities, value_for_money, overall_rating);
-    hotel->add_rating(rating);
+    Rating* rating =  new Rating(location, cleanliness, staff, facilities, value_for_money, overall_rating);
+    hotel->add_rating(user, rating);
+    user->add_rating(hotel, rating);
     output->ok_request();
 }
 
@@ -130,7 +199,7 @@ void Utrip::show_reservations(User* user)
 void Utrip::post_reservation(User* user, string hotel_id, string room_type, int quantity, int check_in, int check_out)
 {
     RoomManager* hotel_room_manager = hotel_database->get_hotel_by_id(hotel_id)->get_room_manager();
-    double total_price = hotel_room_manager->get_reservation_price(room_type, quantity);
+    double total_price = hotel_room_manager->get_reservation_one_night_price(room_type, quantity) * (check_out - check_in + 1);
     user->check_credit(total_price);
     Reservation* reservation = hotel_room_manager->reserve_rooms(room_type, quantity, check_in, check_out);
     reservation->set_hotel_id(hotel_id);
@@ -138,14 +207,25 @@ void Utrip::post_reservation(User* user, string hotel_id, string room_type, int 
     output->show_reserved_rooms_ids(reservation->get_room_ids());
 }
 
-void Utrip::show_hotels(User* user)
+void Utrip::handle_default_price_filter(User* user)
 {
+    if (!user->can_apply_default_price_filter())
+        return;
+    Filter* new_filter = new FilterDefaultPrice(user->get_reservations());
+    user->add_filter(new_filter);
+    output->show_default_price_filter_activation();
+}
+
+_hotels Utrip::show_hotels(User* user)
+{
+    handle_default_price_filter(user);
     _filters filters = user->get_filters();
     _hotels hotels = hotel_database->get_hotels();
     for (auto it = filters.begin(); it != filters.end(); it++)
         hotels = (*it)->meet_criteria(hotels);
+    handle_user_sort(user, hotels);
     check_empty(hotels.size());
-    output->show_hotels(hotels);
+    return hotels;
 }
 
 void Utrip::show_hotel(string id)
@@ -177,15 +257,24 @@ User* Utrip::login(string email, string password)
 {
     hash<string> string_hash;
     User* user = user_database->login(email, string_hash(password));
+    cerr << user->get_username() << user->get_email() << endl;
     output->ok_request();
     return user;
 }
 
 User* Utrip::signup(string username, string email, string password)
 {
+    cerr << "SIGNUP: " << username << "  " << email << endl;
     User* user = user_database->signup(username, email, password);
     output->ok_request();
     return user;
+}
+
+void Utrip::check_weights(vector<double> weights)
+{
+    for (auto it = weights.begin(); it != weights.end(); it++)
+        if (*it < MINIMUM_WEIGHT, *it > MAXIMUM_WEIGHT)
+            throw BadRequest();
 }
 
 void Utrip::check_prices(double min, double max)

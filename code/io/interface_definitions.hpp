@@ -10,6 +10,10 @@
 #define COMMENT_COMMAND "comments"
 #define RATING_COMMAND "ratings"
 #define FILTER_COMMAND "filters"
+#define DEFAULT_PRICE_FILTER_COMMAND "default_price_filter"
+#define SORT_COMMAND "sort"
+#define MANUAL_WEIGHTS_COMMAND "manual_weights"
+#define ESTIMATED_WEIGHTS_COMMAND "estimated_weights"
 
 #define SIGNUP_COMMAND_MINIMUM_WORDS 9
 #define LOGIN_COMMAND_MINIMUM_WORDS 7
@@ -56,6 +60,14 @@
 #define MAX_STAR "max_star"
 #define MIN_PRICE "min_price"
 #define MAX_PRICE "max_price"
+#define ACTIVE "active"
+#define PROPERTY "property"
+#define ORDER "order"
+
+#define TRUE "true"
+#define FALSE "false"
+#define ASCENDING "ascending"
+#define DESCENDING "descending"
 
 #define LOGGED_OUT NULL
 

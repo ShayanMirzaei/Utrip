@@ -39,7 +39,22 @@ RoomManager::~RoomManager()
     }
 }
 
-double RoomManager::get_reservation_price(string room_type, int quantity)
+bool RoomManager::room_price_is_lower(RoomManager* room_manager, RoomType type)
+{
+    switch (type)
+    {
+    case standard:
+        return room_prices[standard] < room_manager->room_prices[standard];
+    case deluxe:
+        return room_prices[deluxe] < room_manager->room_prices[deluxe];
+    case luxury:
+        return room_prices[luxury] < room_manager->room_prices[luxury];
+    case premium:
+        return room_prices[premium] < room_manager->room_prices[premium];
+    }
+}
+
+double RoomManager::get_reservation_one_night_price(string room_type, int quantity)
 {
     double total_price = 0;
     RoomType type = get_room_type(room_type);
@@ -59,7 +74,7 @@ Reservation* RoomManager::reserve_rooms(string room_type, int quantity, int chec
     RoomType type = get_room_type(room_type);
     _room_ids reserved_rooms = find_available_rooms(type, quantity, check_in, check_out);
     check_enough_rooms(reserved_rooms.size(), quantity);
-    double total_price = get_reservation_price(room_type, quantity);
+    double total_price = get_reservation_one_night_price(room_type, quantity) * (check_out - check_in + 1);
     Reservation* reservation = new Reservation(check_in, check_out, reserved_rooms, total_price, room_type, quantity);
     add_reservation_to_rooms(reservation, reserved_rooms);
     return reservation;

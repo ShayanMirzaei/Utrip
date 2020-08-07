@@ -1,6 +1,6 @@
 #include "HotelDataParser.hpp"
 #include "../hotel/HotelDatabase.hpp"
-#include "../utilities.hpp"
+#include "../utility_functions.hpp"
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -12,7 +12,21 @@ using namespace std;
 
 void HotelDataParser::read_data()
 {
-    ifstream file(csv_file_dir);
+    read_hotel_data();
+    read_ratings();
+}
+
+void HotelDataParser::read_ratings()
+{
+    ifstream file(rating_csv_file_dir);
+    string line = dump_first_line(file);
+    while (getline(file, line))
+        database->add_ratings(parse_string_to_vector(line, CSV_DELIMITER));
+}
+
+void HotelDataParser::read_hotel_data()
+{
+    ifstream file(hotel_csv_file_dir);
     string line = dump_first_line(file);
     while (getline(file, line))
         database->add_hotel(parse_string_to_vector(line, CSV_DELIMITER));

@@ -38,4 +38,9 @@ class NoRating : public std::exception {
     const char* what() const noexcept;
 };
 
+class InsufficientRatings : public std::exception {
+    public:
+    const char* what() const noexcept;
+};
+
 #endif

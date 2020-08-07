@@ -6,7 +6,7 @@
 
 class Hotel;
 typedef std::vector<Hotel*> _hotels;
-enum FilterType {city , price, star, room};
+enum FilterType {city , price, star, room, default_price};
 
 class Filter {
     public:

@@ -9,6 +9,7 @@ typedef std::vector<std::string> _room_ids;
 class Reservation {
     public:
     Reservation(int _check_in, int _check_out, _room_ids _reserved_rooms, double _total_price, std::string _room_type, int _quantity);
+    ~Reservation();
     bool is_full(int new_check_in, int new_check_out);
     void set_hotel_id(std::string _hotel_id);
     _room_ids get_room_ids() { return reserved_room; }
@@ -20,6 +21,7 @@ class Reservation {
     int get_check_in() { return check_in; }
     int get_check_out() { return check_out; }
     int get_quantity() { return quantity; }
+    double get_one_night_price();
 
     private:
     int reservation_id;

@@ -11,11 +11,40 @@
 #include "../user/User.hpp"
 #include <map>
 #include "output_definitions.hpp"
+#include "../user/Weight.hpp"
 
 using namespace std;
 
 typedef vector<double> _transactions;
 typedef map<int,int> RoomInfo;
+
+void Output::show_estimated_weights(Weight* weight)
+{
+    vector<long double> weights = weight->get_weights();
+    show_weights(weights);
+}
+
+void Output::show_manual_weights(Weight* weight, string mode)
+{
+    cout << ACTIVE << mode << WEIGHT_DELIMITER;
+    if (mode == DEACTIVE)
+    {
+        cout << endl;
+        return;
+    } 
+    vector<long double> weights = weight->get_weights();
+    show_weights(weights);
+}
+
+void Output::show_weights(_weights weights)
+{
+    cout << setprecision(DEFUALT_PRECISION) << fixed;
+    cout << WEIGHT_LOCATION << weights[location] << WEIGHT_DELIMITER;
+    cout << WEIGHT_CLEANLINESS << weights[cleanliness] << WEIGHT_DELIMITER;
+    cout << WEIGHT_STAFF << weights[staff] << WEIGHT_DELIMITER;
+    cout << WEIGHT_FACILITIES << weights[facilities] << WEIGHT_DELIMITER;
+    cout << WEIGHT_VALUE_FOR_MONEY << weights[value_for_money] << endl;
+}
 
 void Output::show_hotels(_hotels hotels)
 {
@@ -31,21 +60,26 @@ void Output::show_hotels(_hotels hotels)
     }
 }
 
+void Output::show_default_price_filter_activation()
+{
+    cout << DEFAULT_FILTER_ACTIVATION << endl;
+}
+
 void Output::show_comments(_comments comments)
 {
     for (auto it = comments.begin(); it != comments.end(); it++)
         cout << (*it).user->get_username() << COLON << (*it).comment << endl;
 }
 
-void Output::show_average_ratings(Rating rating)
+void Output::show_average_ratings(Rating* rating)
 {
     cout << setprecision(DEFUALT_PRECISION) << fixed;
-    cout << LOCATION << rating.location << endl;
-    cout << CLEANLINESS << rating.cleanliness << endl;
-    cout << STAFF << rating.staff << endl;
-    cout << FACILITIES << rating.facilities << endl;
-    cout << VALUE_FOR_MONEY << rating.value_for_money << endl;
-    cout << OVERALL << rating.overall_rating << endl;
+    cout << LOCATION << rating->get_ratings()[location] << endl;
+    cout << CLEANLINESS << rating->get_ratings()[cleanliness] << endl;
+    cout << STAFF << rating->get_ratings()[staff] << endl;
+    cout << FACILITIES << rating->get_ratings()[facilities] << endl;
+    cout << VALUE_FOR_MONEY << rating->get_ratings()[value_for_money] << endl;
+    cout << OVERALL << rating->get_ratings()[overall_rating] << endl;
 }
 
 void Output::show_reservations(_reservations reservations)

@@ -8,7 +8,7 @@ Room::~Room()
 {
     for (auto it = reservations.begin(); it != reservations.end(); it++)
     {
-        delete *it;
+        //delete *it;
         *it = nullptr;
     }
 }

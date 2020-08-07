@@ -50,6 +50,11 @@ class UserInterface {
     void handle_price_filter();
     void handle_room_filter();
     void handle_star_filter();
+    void handle_default_price_filter();
+    void handle_sort();
+    void handle_post_manual_weights();
+    void handle_get_manual_weights();
+    void handle_get_estimated_weights();
 };
 
 #endif
