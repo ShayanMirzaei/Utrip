@@ -7,3 +7,5 @@ their reservations if needed.
 In the second phase of the project, we aimed to use the data provided to recommend better hotel options for users based on their
 own personal ratings, thus needing a bit of machine learning. This was done using different criteria for a hotel, and the weight 
 that each user would give to said critera.
+
+**** Note that the program must be run using the command "./utrip assets/hotels.csv assets/ratings.csv 
